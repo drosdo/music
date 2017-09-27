@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import createHistory from 'history/createBrowserHistory'
 import { Route } from 'react-router'
+import 'babel-polyfill';
 
 import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux'
 
