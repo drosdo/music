@@ -53,7 +53,7 @@ exports.list_folder_all_files = function(req, res, next, path, recursive) {
   );
 };
 
-exports.getTemporaryLink = function(req, res, next) {
+exports.getTemporaryLink = (req, res, next) => {
   console.log(req.query.path);
   var dx = dropbox(
     {
@@ -70,7 +70,22 @@ exports.getTemporaryLink = function(req, res, next) {
     }
   ).on('error', (err)=> res.send(err));
 };
-
+exports.getTemporaryLink2 = (path, next) => {
+  var dx = dropbox(
+    {
+      resource: 'files/get_temporary_link',
+      parameters: {
+        path
+      }
+    },
+    (err, data) => {
+      if (err) {
+        return next(err);
+      }
+      next(err, data);
+    }
+  ).on('error', (err)=> next(err));
+};
 exports.get_updates = function(req, res, next, path, recursive) {
   dropbox(
     {
@@ -85,9 +100,10 @@ exports.get_updates = function(req, res, next, path, recursive) {
       }
       next(null, data);
     }
-  );
+  ).on('error', (err)=> next(err));
 };
 exports.createFolder = (req, res, next, path) => {
+  console.log('createFolder');
   dropbox(
     {
       resource: 'files/create_folder_v2',
@@ -96,15 +112,16 @@ exports.createFolder = (req, res, next, path) => {
       }
     },
     (err, data) => {
+      console.log(err, data);
       if (err) {
         return next(err);
       }
       next(null, data);
     }
-  );
+  ).on('error', (err)=> next(err));
 }
 
-exports.uploadFile = (req, res, next, path, readStream) => {
+exports.uploadFile = (req, res, next, path, readStream, extraData) => {
   dropbox(
     {
       resource: 'files/upload',
@@ -117,7 +134,7 @@ exports.uploadFile = (req, res, next, path, readStream) => {
       if (err) {
         return next(err);
       }
-      next(null, data);
+      next(null, data, extraData);
     }
-  );
+  ).on('error', (err)=> next(err));
 }

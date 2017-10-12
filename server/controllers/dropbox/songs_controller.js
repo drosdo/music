@@ -3,16 +3,14 @@ const Band = require('../../models/dropbox/band');
 const Song = require('../../models/dropbox/song');
 const dropbox = require('../../services/dropbox');
 const _ = require('lodash');
+const async = require('async');
 
 // list albums by band
 exports.updateAllSongs = function(req, res, next) {};
 
 exports.update = function(req, res, next) {
   const album = req.query.album;
-  Album.findOne({ name: new RegExp(album, 'i') }, function(
-    err,
-    folder
-  ) {
+  Album.findOne({ name: new RegExp(album, 'i') }, function(err, folder) {
     if (err) {
       return next(err);
     }
@@ -40,13 +38,59 @@ exports.update = function(req, res, next) {
 };
 
 exports.get = function(req, res, next) {
+  const band = new RegExp(req.query.band, 'i');
+  const album = new RegExp(req.query.album, 'i');
+
   Song.collection
     .find({
-      band: new RegExp(req.query.band, 'i'),
-      album: new RegExp(req.query.album, 'i')
+      band,
+      album
     })
-    .toArray((err, result) => {
+    .toArray((err, songs) => {
       if (err) throw err;
-      res.send(result);
+      var songsWithLinks = [];
+      async.each(
+        songs,
+        (song, callback) => {
+          let index = songs.indexOf(song);
+          songsWithLinks[index] = song;
+          async.series(
+            [
+              callback => {
+                let path = `/Music/${req.query.band}/${req.query
+                  .album}/${song.name}`;
+                dropbox.getTemporaryLink2(path, songLink);
+                function songLink(err, data) {
+                  if(err) return callback(err);
+                  songsWithLinks[index].tempSongLink = data.link;
+                  callback();
+                }
+              },
+              callback => {
+                let waveName = `${song.name.replace(/\.[^/.]+$/, '')}.dat`;
+                let path = `/waves/${req.query.band}/${req.query
+                  .album}/${waveName}`;
+                dropbox.getTemporaryLink2(path, waveLink);
+                function waveLink(err, data) {
+                  if(err) return callback(err);
+                  songsWithLinks[index].tempWaveLink = data.link;
+                  callback();
+                }
+              }
+            ],
+            (err, data) => {
+              callback();
+            }
+          );
+        },
+        err => {
+          // console.log('songs', songsWithLinks);
+          res.send(songsWithLinks);
+        }
+      );
     });
 };
+function getFileLinks(band, album, song, songsLength, i) {
+  let songPath = `/Music/${band}/${album}/${song.name}`;
+  dropbox.getTemporaryLink2;
+}

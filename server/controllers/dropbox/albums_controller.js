@@ -40,7 +40,7 @@ exports.get = function(req, res, next) {
 };
 
 exports.saveAlbum = (res, name, band) => {
-  Album.collection.remove();
+  //Album.collection.remove();
   let albumItem = new Album({
     name,
     band

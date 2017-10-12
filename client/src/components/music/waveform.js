@@ -9,50 +9,27 @@ export default class Waveform extends React.Component {
     super(props);
   }
   componentDidMount() {
+    const { tempSongLink, tempWaveLink } = this.props.song;
     this.hasWaveDat = false;
-    this.getFileLink();
-    this.getWaveLink();
-  }
-  getWaveLink() {
-    const { name, album, band } = this.props.song;
 
-    axios
-      .get('http://localhost:3090/get-dropbox-file-link', {
-        params: {
-          path: `/waves/${band}/${album}/${name.replace(/\.[^/.]+$/, '')}.dat`
-        }
-      })
-      .then(data => {
-        if (data.data.link) {
-          this.getWaveFormFromDat(data.data.link);
-          this.hasWaveDat = true;
-        }
-      });
+    if (tempWaveLink) {
+      this.getWaveFormFromDat(tempWaveLink);
+      this.hasWaveDat = true;
+    }
+    if (tempSongLink) {
+      this.initAudioTag(tempSongLink);
+    }
   }
 
-  getFileLink() {
-    const { name, album, band} = this.props.song;
-
-    axios
-      .get('http://localhost:3090/get-dropbox-file-link', {
-        params: {
-          path: `/Music/${band}/${album}/${name}`
-        }
-      })
-      .then(data => {
-        const url = data.data.link;
-        console.log(data);
-
-        this.initAudioTag(url);
-      });
-  }
   initAudioTag(url) {
+    const { tempSongLink } = this.props.song;
+    this.isAudioLoaded = false;
     // var contextObj = window.webkitAudioContext || window.AudioContext;
     // var context = new contextObj();
 
-    this.audioTagSource.src = url;
+    //this.audioTagSource.src = url;
 
-    this.audioTag.load(); //call this to just preload the audio without playing
+    //this.audioTag.load(); //call this to just preload the audio without playing
     //this.audioTag.play();
     // var source = context.createMediaElementSource(audioTag);
     // source.connect(context.destination);
@@ -80,10 +57,17 @@ export default class Waveform extends React.Component {
     });
 
     this.cursorCanvas.addEventListener('click', e => {
-      let pos = e.pageX - this.cursorCanvas.offsetLeft;
-      let currentTime =
-        pos * this.audioTag.duration / this.cursorCanvas.clientWidth;
-      this.audioTag.currentTime = currentTime;
+      if(this.isAudioLoaded) {
+        let pos = e.pageX - this.cursorCanvas.offsetLeft;
+        let currentTime =
+          pos * this.audioTag.duration / this.cursorCanvas.clientWidth;
+        this.audioTag.currentTime = currentTime;
+      }else {
+        this.isAudioLoaded = true;
+        this.audioTagSource.src = url;
+        this.audioTag.load();
+        this.audioTag.play();
+      }
     });
   }
   drawWave(waveform) {

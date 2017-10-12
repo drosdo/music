@@ -32,7 +32,7 @@ class Music extends Component {
       <div>
         {this.renderNav()}
         <Albums band={band}/>
-        <Songs band={band} album={'superRiff10'}/>
+        <Songs band={band} album={'superRiff40'}/>
 
         <Upload band={band}/>
       </div>
