@@ -1,0 +1,88 @@
+{
+    "kind": "drive#file",
+    "id": "0B-iNq2K2dQkTYkRxSEdWQzBrc2M",
+    "etag": "\"DOb_gvjevy1ZTSMr1FXDSJnOzac/MTUwNzQ1ODgwMTIzOQ\"",
+    "selfLink": "https://www.googleapis.com/drive/v2/files/0B-iNq2K2dQkTYkRxSEdWQzBrc2M",
+    "webContentLink": "https://drive.google.com/uc?id=0B-iNq2K2dQkTYkRxSEdWQzBrc2M&export=download",
+    "alternateLink": "https://drive.google.com/file/d/0B-iNq2K2dQkTYkRxSEdWQzBrc2M/view?usp=drivesdk",
+    "embedLink": "https://drive.google.com/file/d/0B-iNq2K2dQkTYkRxSEdWQzBrc2M/preview?usp=drivesdk",
+    "iconLink": "https://drive-thirdparty.googleusercontent.com/16/type/audio/mp3",
+    "title": "crazy-drums.mp3",
+    "mimeType": "audio/mp3",
+    "labels": {
+        "starred": false,
+        "hidden": false,
+        "trashed": false,
+        "restricted": false,
+        "viewed": true
+    },
+    "createdDate": "2017-10-08T10:33:21.239Z",
+    "modifiedDate": "2017-10-08T10:33:21.239Z",
+    "modifiedByMeDate": "2017-10-08T10:33:21.239Z",
+    "lastViewedByMeDate": "2017-10-08T10:33:21.239Z",
+    "markedViewedByMeDate": "1970-01-01T00:00:00.000Z",
+    "version": "3",
+    "parents": [
+        {
+            "kind": "drive#parentReference",
+            "id": "0B-iNq2K2dQkTU0VtMU1qNGdjWm8",
+            "selfLink": "https://www.googleapis.com/drive/v2/files/0B-iNq2K2dQkTYkRxSEdWQzBrc2M/parents/0B-iNq2K2dQkTU0VtMU1qNGdjWm8",
+            "parentLink": "https://www.googleapis.com/drive/v2/files/0B-iNq2K2dQkTU0VtMU1qNGdjWm8",
+            "isRoot": false
+        }
+    ],
+    "downloadUrl": "https://doc-00-a4-docs.googleusercontent.com/docs/securesc/fdge7bc63bd51u847sqvl1fl7mrh50v4/bj5sn9rl9jsd53nong0k2bls3je6d8s8/1507464000000/07221770842575162441/07221770842575162441/0B-iNq2K2dQkTYkRxSEdWQzBrc2M?e=download&gd=true",
+    "userPermission": {
+        "kind": "drive#permission",
+        "etag": "\"DOb_gvjevy1ZTSMr1FXDSJnOzac/WsRkRA_RbNxlB-F9aRuiDIK9dL4\"",
+        "id": "me",
+        "selfLink": "https://www.googleapis.com/drive/v2/files/0B-iNq2K2dQkTYkRxSEdWQzBrc2M/permissions/me",
+        "role": "owner",
+        "type": "user"
+    },
+    "originalFilename": "crazy-drums.mp3",
+    "fileExtension": "mp3",
+    "md5Checksum": "057965b233c9d5e98b0526803374d621",
+    "fileSize": "9258758",
+    "quotaBytesUsed": "9258758",
+    "ownerNames": [
+        "Dmitry Drozdov"
+    ],
+    "owners": [
+        {
+            "kind": "drive#user",
+            "displayName": "Dmitry Drozdov",
+            "picture": {
+                "url": "https://lh5.googleusercontent.com/-Cn_zB1GHQss/AAAAAAAAAAI/AAAAAAAAAxs/N1Kh97On1zE/s64/photo.jpg"
+            },
+            "isAuthenticatedUser": true,
+            "permissionId": "07221770842575162441",
+            "emailAddress": "drosdo@gmail.com"
+        }
+    ],
+    "lastModifyingUserName": "Dmitry Drozdov",
+    "lastModifyingUser": {
+        "kind": "drive#user",
+        "displayName": "Dmitry Drozdov",
+        "picture": {
+            "url": "https://lh5.googleusercontent.com/-Cn_zB1GHQss/AAAAAAAAAAI/AAAAAAAAAxs/N1Kh97On1zE/s64/photo.jpg"
+        },
+        "isAuthenticatedUser": true,
+        "permissionId": "07221770842575162441",
+        "emailAddress": "drosdo@gmail.com"
+    },
+    "capabilities": {
+        "canCopy": true,
+        "canEdit": true
+    },
+    "editable": true,
+    "copyable": true,
+    "writersCanShare": true,
+    "shared": true,
+    "explicitlyTrashed": false,
+    "appDataContents": false,
+    "headRevisionId": "0B-iNq2K2dQkTQnFSbzFnc2JNQmNtQUxzbGFpSkh2TkFOd00wPQ",
+    "spaces": [
+        "drive"
+    ]
+}

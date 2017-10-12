@@ -1,22 +1,24 @@
+var webpack = require('webpack');
 module.exports = {
-  entry: [
-    './src/index.js'
-  ],
+  devtool: 'source-map',
+  entry: ['./src/index.js'],
   output: {
     path: __dirname,
     publicPath: '/',
     filename: 'bundle.js'
   },
   module: {
-    rules: [{
-      exclude: /node_modules/,
-      use: {
-           loader: 'babel-loader',
-           options: {
-               presets: ['react', 'es2015', 'stage-1']
-             }
+    rules: [
+      {
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['react', 'es2015', 'stage-1']
+          }
         }
-    }]
+      }
+    ]
   },
   resolve: {
     extensions: ['.js', '.jsx']
@@ -24,5 +26,12 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     contentBase: './'
-  }
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        IS_BROWSER: JSON.stringify('true') // default value if not specified
+      }
+    })
+  ]
 };

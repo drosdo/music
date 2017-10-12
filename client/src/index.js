@@ -17,12 +17,15 @@ import Signin from './components/auth/signin';
 import Signout from './components/auth/signout';
 import Signup from './components/auth/signup';
 import Feature from './components/feature';
+import Music from './components/music/music';
+
 import RequireAuth from './components/auth/require_auth';
+import GuestAccessFor from './components/auth/require_auth_or_url';
 import Welcome from './components/welcome';
 import { AUTH_USER } from './actions/types';
 import reducers from './reducers';
 
-const initialState = {auth: { authenticated: false, error: ''} }
+const initialState = {auth: { authenticated: false, guest: false, error: ''} }
 const history = createHistory()
 
 const middleware = [
@@ -53,6 +56,9 @@ ReactDOM.render(
         <Route path="/signout" component={Signout} />
         <Route path="/signup" component={Signup} />
         <Route path="/feature" component={RequireAuth(Feature)} />
+        <Route path="/music/:band/" component={Music} />
+        <Route path="/music/:band/:album" component={Music} />
+
       </div>
     </ConnectedRouter>
   </Provider>
