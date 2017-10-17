@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 // Define our model
 const bandSchema= new Schema({
-  name: String,
+  name: String
 });
 
 // Create the model class

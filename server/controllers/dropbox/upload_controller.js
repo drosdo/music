@@ -5,6 +5,7 @@ const fs = require('fs');
 const Band = require('../../models/dropbox/band');
 const Song = require('../../models/dropbox/song');
 const Albums = require('./albums_controller');
+const async = require('async');
 
 const dropbox = require('../../services/dropbox');
 
@@ -17,22 +18,24 @@ const storage = multer.diskStorage({
 });
 // exports.multerUpload = multer({ storage }).any('file');
 
-exports.upload = class Upload {
-  constructor(req, res) {}
-
-  uploadAlbum(req, res, next) {
+class Upload {
+  constructor(req, res, next) {
     this.req = req;
     this.res = res;
-    this.files = req.files;
-    this.folderPath = req.body.fullPath[0];
+    this.next = next;
+    this.uploadAlbum();
+  }
+
+  uploadAlbum() {
+    this.files = this.req.files;
+    this.folderPath = this.req.body.fullPath[0];
     this.folderName = this.folderPath.substr(
       0,
       this.folderPath.lastIndexOf('/')
     );
-    this.band = req.body.band[0];
-
+    this.band = this.req.body.band[0];
     Albums.saveAlbum(this.res, this.folderName, this.band);
-    this.uploadFiles();
+    this.asyncUploadFiles();
   }
 
   multerUpload(req, res, next) {
@@ -40,21 +43,66 @@ exports.upload = class Upload {
     multer({ storage }).any('file');
   }
 
-  uploadFiles() {
-    this.filesCompleteCount = 0;
-    _.times(this.files.length, index => {
-      this.uploadWithWave(index);
-    });
+  asyncUploadFiles() {
+    console.log('asyncUploadFiles');
+    async.each(
+      this.files,
+      (file, callback) => {
+        let source = `./files/${file.filename}`;
+        let waveName = `${file.filename.replace(/\.[^/.]+$/, '')}.dat`;
+        let wave = `./files/${waveName}`;
+        let wavePath = `/waves/${this.band}/${this.folderName}/${waveName}`;
+        let songPath = `/Music/${this.band}/${this
+          .folderName}/${file.filename}`;
+        async.series(
+          {
+            // create wave
+            wave: callback => {
+              this.createWaveFile(source, wave, callback);
+            }, // upload wave
+            uploadedWave: callback => {
+              console.log('start upload wave', wave);
+              let readStream = fs.createReadStream(wave);
+              dropbox.uploadFile2(wavePath, readStream, callback);
+            }, //upload song
+            uploadedSong: callback => {
+              console.log('start upload song', source);
+              fs.unlinkSync(wave);
+              let readStream = fs.createReadStream(source);
+              dropbox.uploadFile2(songPath, readStream, callback);
+            }
+          },
+          (err, data) => {
+            if (err) return callback(err);
+
+            fs.unlinkSync(source);
+            //save to db
+            let songData = {
+              name: file.filename,
+              band: this.band,
+              createdTime: data.uploadedSong.client_modified,
+              size: data.uploadedSong.size,
+              album: this.folderName
+            };
+            let song = new Song(songData);
+            console.log('songUploaded', songData);
+            song.save(err => {
+              console.log(err);
+              callback(err);
+            });
+          }
+        );
+      },
+      err => {
+        console.log('all series callback');
+        if (err) return this.error(err);
+        this.success();
+      }
+    );
   }
-  uploadFilesCallback(err, isLast) {
-    if (err) return this.error(err);
-    console.log('uploaded', isLast);
-    if (isLast) {
-      this.success();
-    }
-  }
+
   // CREATE WAVE FILE
-  createWaveFile(source, wave, i) {
+  createWaveFile(source, wave, next) {
     let audiowave = require('child_process').spawn('audiowaveform', [
       '-i',
       source,
@@ -69,84 +117,10 @@ exports.upload = class Upload {
     audiowave
       .on('close', (code, signal) => {
         fs.readFile(wave, (err, data) => {
-          if (err !== null) return this.error(err);
-          this.createWaveFileCallback(i);
+          next(err, wave);
         });
       })
-      .on('error', err => this.error(err));
-  }
-  createWaveFileCallback(i) {
-    // TODO загнать это в this.fileData[i]
-    let file = this.files[i];
-    let waveName = `${file.filename.replace(/\.[^/.]+$/, '')}.dat`;
-    let wave = `./files/${waveName}`;
-    let path = `/waves/${this.band}/${this.folderName}/${waveName}`;
-    let readStream = fs.createReadStream(wave);
-
-    dropbox.uploadFile(
-      this.req,
-      this.res,
-      this.waveUploadCallback.bind(this),
-      path,
-      readStream,
-      i
-    );
-  }
-  waveUploadCallback(err, data, i) {
-    if (err !== null) return this.error(err);
-    let wave = './files/' + data.name;
-    let source = './files/' + this.files[i].filename;
-
-    console.log('waveUploaded', data);
-
-    fs.unlinkSync(wave);
-
-    let path = `/Music/${this.band}/${this.folderName}/${this.files[i]
-      .filename}`;
-    let readStream = fs.createReadStream(source);
-    dropbox.uploadFile(
-      this.req,
-      this.res,
-      this.songUploadedCallback.bind(this),
-      path,
-      readStream,
-      i
-    );
-  }
-  songUploadedCallback(err, data, i) {
-    if (err !== null) return this.error(err);
-    console.log('song');
-    console.log(data);
-    let source = './files/' + this.files[i].filename;
-    fs.unlinkSync(source);
-    this.saveSongToDb(
-      {
-        name: this.files[i].filename,
-        band: this.band,
-        createdTime: data.client_modified,
-        size: data.size,
-        album: this.folderName
-      },
-      i
-    );
-  }
-  saveSongToDb(data, i) {
-    let song = new Song(data);
-
-    song.save(err => {
-      if (err) {
-        return this.error(err);
-      }
-      this.songFinishCallback();
-    });
-  }
-  songFinishCallback() {
-    console.log('song finished');
-    this.filesCompleteCount++;
-    console.log(this.filesCompleteCount);
-    if (this.filesCompleteCount === this.files.length) {
-      this.success();
-    }
+      .on('error', err => next(err));
   }
   success() {
     this.res.status(200).send('all uploaded');
@@ -155,12 +129,8 @@ exports.upload = class Upload {
     this.res.status(500).send(err);
   }
 
-  uploadWithWave(i) {
-    let file = this.files[i];
-    let source = `./files/${file.filename}`;
-    let waveName = `${file.filename.replace(/\.[^/.]+$/, '')}.dat`;
-    let wave = `./files/${waveName}`;
+}
 
-    this.createWaveFile(source, wave, i);
-  }
+exports.init = function(req, res, next) {
+  return new Upload(req, res, next);
 };

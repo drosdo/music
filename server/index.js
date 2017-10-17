@@ -6,9 +6,10 @@ const app = express();
 const router = require('./router.js')
 const mongoose = require('mongoose');
 const cors = require('cors');
+mongoose.Promise = global.Promise;
 
 // DB Setup
-mongoose.connect('mongodb://localhost/auth', { useMongoClient: true, promiseLibrary: require('bluebird') });
+mongoose.connect('mongodb://127.0.0.1/auth', { useMongoClient: true, promiseLibrary: require('bluebird') });
 
 
 // App Setup

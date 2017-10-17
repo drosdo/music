@@ -4,37 +4,75 @@ const Song = require('../../models/dropbox/song');
 const dropbox = require('../../services/dropbox');
 const _ = require('lodash');
 const async = require('async');
+const moment = require('moment');
 
-// list albums by band
-exports.updateAllSongs = function(req, res, next) {};
+exports.erase = next => {
+  Song.collection.remove();
+};
 
-exports.update = function(req, res, next) {
-  const album = req.query.album;
-  Album.findOne({ name: new RegExp(album, 'i') }, function(err, folder) {
-    if (err) {
-      return next(err);
-    }
-    dropbox.list_folder_all_files(req, res, saveSongs, path, recursive);
+exports.update = function(album, band, next) {
+  dropbox.list_folder_all_files(
+    `/Music/${band.name}/${album.name}`,
+    saveSongs,
+    false
+  );
 
-    function saveSongs(data) {
-      Song.collection.remove();
-      _.forEach(data.entries, song => {
-        let songItem = new Song({
-          name: song.name,
-          band: req.query.band,
-          createdTime: song.client_modified,
-          size: song.size,
-          album: album
-        });
-        songItem.save(function(err) {
-          if (err) {
-            return next(err);
+  function saveSongs(err, songs) {
+    if (err) return next(err);
+    async.each(songs, saveSong, err => {
+      next(null, songs);
+    });
+    function saveSong(song, callback) {
+      let index = songs.indexOf(song);
+      tempSongLink = {};
+      tempWaveLink = {};
+      async.series(
+        [
+          callback => {
+            let path = `/Music/${band.name}/${album.name}/${song.name}`;
+            dropbox.getTemporaryLink2(path, songLink);
+            function songLink(err, data) {
+              if (err) return callback(err);
+              tempSongLink = {
+                link: data.link,
+                expires: moment().add(4, 'hours')
+              };
+
+              callback();
+            }
+          },
+          callback => {
+            let waveName = `${song.name.replace(/\.[^/.]+$/, '')}.dat`;
+            let path = `/waves/${band.name}/${album.name}/${waveName}`;
+            dropbox.getTemporaryLink2(path, waveLink);
+            function waveLink(err, data) {
+              if (err) return callback(err);
+              tempWaveLink = {
+                link: data.link,
+                expires: moment().add(4, 'hours')
+              };
+              callback();
+            }
           }
-        });
-      });
-      res.send(data);
+        ],
+        err => {
+          if (err) return callback(err);
+          let songItem = new Song({
+            name: song.name,
+            band: band.name,
+            createdTime: song.client_modified,
+            size: song.size,
+            album: album.name,
+            tempWaveLink,
+            tempSongLink
+          });
+          songItem.save(function(err) {
+            callback(err);
+          });
+        }
+      );
     }
-  });
+  }
 };
 
 exports.get = function(req, res, next) {
@@ -47,13 +85,14 @@ exports.get = function(req, res, next) {
       album
     })
     .toArray((err, songs) => {
-      if (err) throw err;
+      if (err) return res.status(500).send(err);
       var songsWithLinks = [];
       async.each(
         songs,
         (song, callback) => {
           let index = songs.indexOf(song);
           songsWithLinks[index] = song;
+          console.log('song', index);
           async.series(
             [
               callback => {
@@ -61,7 +100,7 @@ exports.get = function(req, res, next) {
                   .album}/${song.name}`;
                 dropbox.getTemporaryLink2(path, songLink);
                 function songLink(err, data) {
-                  if(err) return callback(err);
+                  if (err) return callback(err);
                   songsWithLinks[index].tempSongLink = data.link;
                   callback();
                 }
@@ -72,19 +111,21 @@ exports.get = function(req, res, next) {
                   .album}/${waveName}`;
                 dropbox.getTemporaryLink2(path, waveLink);
                 function waveLink(err, data) {
-                  if(err) return callback(err);
+                  if (err) return callback(err);
                   songsWithLinks[index].tempWaveLink = data.link;
                   callback();
                 }
               }
             ],
-            (err, data) => {
+            err => {
+              if (err) return callback(err);
               callback();
             }
           );
         },
         err => {
-          // console.log('songs', songsWithLinks);
+          console.log(err);
+          if (err) return res.status(500).send(err);
           res.send(songsWithLinks);
         }
       );

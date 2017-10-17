@@ -6,8 +6,9 @@ const dropbox = dropboxV2Api.authenticate({
 const songsUrl = '/Music/';
 const wavesUrl = '/waves/';
 
-exports.list_folder_all_files = function(req, res, next, path, recursive) {
+exports.list_folder_all_files = function(path, next, recursive) {
   let resultAll = [];
+  console.log(path);
 
   function dxContinue(cursor) {
     dropbox(
@@ -84,7 +85,8 @@ exports.getTemporaryLink2 = (path, next) => {
       }
       next(err, data);
     }
-  ).on('error', (err)=> next(err));
+  )
+  //.on('error', (err)=> next(err, null));
 };
 exports.get_updates = function(req, res, next, path, recursive) {
   dropbox(
@@ -135,6 +137,24 @@ exports.uploadFile = (req, res, next, path, readStream, extraData) => {
         return next(err);
       }
       next(null, data, extraData);
+    }
+  ).on('error', (err)=> next(err));
+}
+
+exports.uploadFile2 = (path, readStream, next) => {
+  dropbox(
+    {
+      resource: 'files/upload',
+      parameters: {
+        path
+      },
+      readStream
+    },
+    (err, data) => {
+      if (err) {
+        return next(err);
+      }
+      next(null, data);
     }
   ).on('error', (err)=> next(err));
 }

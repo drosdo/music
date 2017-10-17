@@ -5,8 +5,10 @@ const Authentification = require('./controllers/authentification');
 const Bands = require('./controllers/dropbox/bands_controller');
 const Albums = require('./controllers/dropbox/albums_controller');
 const Songs = require('./controllers/dropbox/songs_controller');
-const UploadController = require('./controllers/dropbox/upload_controller');
-const Upload = new UploadController.upload();
+const Upload = require('./controllers/dropbox/upload_controller');
+const Update = require('./controllers/dropbox/update_controller');
+
+//const Upload = new UploadController.upload();
 
 const dropbox = require('./services/dropbox');
 
@@ -43,6 +45,6 @@ module.exports = function(app) {
   app.get('/get-albums', Albums.get);
   app.get('/get-songs', Songs.get);
   app.get('/get-dropbox-file-link', dropbox.getTemporaryLink);
-
-  app.post('/upload', multer({ storage }).any('file'), Upload.uploadAlbum.bind(Upload) );
+  app.get('/update-all', Update.updateAll);
+  app.post('/upload', multer({ storage }).any('file'), Upload.init);
 };
