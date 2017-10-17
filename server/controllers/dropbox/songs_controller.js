@@ -78,7 +78,7 @@ exports.update = function(album, band, next) {
 exports.get = function(req, res, next) {
   const band = new RegExp(req.query.band, 'i');
   const album = new RegExp(req.query.album, 'i');
-
+  //TODO how update templinks?
   Song.collection
     .find({
       band,
@@ -86,49 +86,7 @@ exports.get = function(req, res, next) {
     })
     .toArray((err, songs) => {
       if (err) return res.status(500).send(err);
-      var songsWithLinks = [];
-      async.each(
-        songs,
-        (song, callback) => {
-          let index = songs.indexOf(song);
-          songsWithLinks[index] = song;
-          console.log('song', index);
-          async.series(
-            [
-              callback => {
-                let path = `/Music/${req.query.band}/${req.query
-                  .album}/${song.name}`;
-                dropbox.getTemporaryLink2(path, songLink);
-                function songLink(err, data) {
-                  if (err) return callback(err);
-                  songsWithLinks[index].tempSongLink = data.link;
-                  callback();
-                }
-              },
-              callback => {
-                let waveName = `${song.name.replace(/\.[^/.]+$/, '')}.dat`;
-                let path = `/waves/${req.query.band}/${req.query
-                  .album}/${waveName}`;
-                dropbox.getTemporaryLink2(path, waveLink);
-                function waveLink(err, data) {
-                  if (err) return callback(err);
-                  songsWithLinks[index].tempWaveLink = data.link;
-                  callback();
-                }
-              }
-            ],
-            err => {
-              if (err) return callback(err);
-              callback();
-            }
-          );
-        },
-        err => {
-          console.log(err);
-          if (err) return res.status(500).send(err);
-          res.send(songsWithLinks);
-        }
-      );
+      res.send(songs);
     });
 };
 function getFileLinks(band, album, song, songsLength, i) {

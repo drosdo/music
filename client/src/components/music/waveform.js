@@ -13,11 +13,11 @@ export default class Waveform extends React.Component {
     this.hasWaveDat = false;
 
     if (tempWaveLink) {
-      this.getWaveFormFromDat(tempWaveLink);
+      this.getWaveFormFromDat(tempWaveLink.link);
       this.hasWaveDat = true;
     }
     if (tempSongLink) {
-      this.initAudioTag(tempSongLink);
+      this.initAudioTag(tempSongLink.link);
     }
   }
 
