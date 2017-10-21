@@ -7,21 +7,35 @@ class Header extends Component {
     if (this.props.authenticated.authenticated) {
       // show a link to sign out
       return (
-        <li className="nav-item">
-          <Link className="nav-link" to="/signout">
-            Sign Out
-          </Link>
-        </li>
+        (
+          <li className="nav-item">
+            <Link className="nav-link"  key={1} to="/music">
+               музыка
+            </Link>
+          </li>
+        ),
+        (
+          <li className="nav-item">
+            <Link className="nav-link" key={2} to="/signout">
+              Sign Out
+            </Link>
+          </li>
+        )
       );
     } else {
       // show a link to sign in or sign up
       return [
         <li className="nav-item" key={1}>
+          <Link className="nav-link" to="/music">
+            Музыка
+          </Link>
+        </li>,
+        <li className="nav-item" key={2}>
           <Link className="nav-link" to="/signin">
             Sign In
           </Link>
         </li>,
-        <li className="nav-item" key={2}>
+        <li className="nav-item" key={3}>
           <Link className="nav-link" to="/signup">
             Sign Up
           </Link>
@@ -32,12 +46,14 @@ class Header extends Component {
 
   render() {
     return (
-      <nav className="navbar navbar-light">
-        <Link to="/" className="navbar-brand">
-          Redux Auth
-        </Link>
-        <ul className="nav navbar-nav">{this.renderLinks()}</ul>
-      </nav>
+      <div className="header">
+        <nav className="navbar">
+          <Link to="/" className="logo">
+            drosdo
+          </Link>
+          <ul className="nav">{this.renderLinks()}</ul>
+        </nav>
+      </div>
     );
   }
 }

@@ -10,11 +10,17 @@ class Songs extends Component {
 
   componentWillMount() {
     const {band, album} = this.props;
-    console.log(band, album);
     this.props.getSongs(band, album);
   }
+  componentDidUpdate(prevProps) {
+    const {band, album} = this.props;
+    if(prevProps.album !== album) {
+      this.props.getSongs(band, album);
+    }    
+  }
+
   renderSongs(){
-    console.log(this.props);
+    console.log('renderSongs');
     return _.map(this.props.songs, song => {
       return (
         <Waveform key={song._id} song={song}/>
@@ -23,9 +29,11 @@ class Songs extends Component {
   }
 
   render() {
+    const {band, album} = this.props;
+
     return (
       <div>
-        <h1>Songs</h1>
+        <h1>Songs for {album}</h1>
         {this.renderSongs()}
       </div>
     );

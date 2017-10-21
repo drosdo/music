@@ -18,7 +18,6 @@ const passportService = require('./services/passport');
 const passport = require('passport');
 var path = require('path');
 
-
 const fs = require('fs');
 
 const requireAuth = passport.authenticate('jwt', { session: false });
@@ -45,6 +44,12 @@ module.exports = function(app) {
   app.get('/get-albums', Albums.get);
   app.get('/get-songs', Songs.get);
   app.get('/get-dropbox-file-link', dropbox.getTemporaryLink);
-  app.get('/update-all', Update.updateAll);
+  app.get('/update-all', (req, res) => {
+    Update.updateAll(onUpdate);
+    function onUpdate(err) {
+      if(err) return res.status(500).send('err');
+      res.status(200).send('updated');
+    }
+  });
   app.post('/upload', multer({ storage }).any('file'), Upload.init);
 };

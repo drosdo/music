@@ -11,7 +11,6 @@ import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-ro
 import reduxThunk from 'redux-thunk';
 
 
-import App from './components/app';
 import Header from './components/header';
 import Signin from './components/auth/signin';
 import Signout from './components/auth/signout';
@@ -24,6 +23,9 @@ import GuestAccessFor from './components/auth/require_auth_or_url';
 import Welcome from './components/welcome';
 import { AUTH_USER } from './actions/types';
 import reducers from './reducers';
+
+import './style/reset.css';
+import './style/app.styl';
 
 const initialState = {auth: { authenticated: false, guest: false, error: ''} }
 const history = createHistory()
@@ -49,16 +51,15 @@ if (token) {
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <div>
+      <div className="container2">
         <Header/>
         <Route exact path="/" component={Welcome} />
         <Route path="/signin" component={Signin} />
         <Route path="/signout" component={Signout} />
         <Route path="/signup" component={Signup} />
         <Route path="/feature" component={RequireAuth(Feature)} />
-        <Route path="/music/:band/" component={Music} />
+        <Route exact path="/music/:band/" component={Music} />
         <Route path="/music/:band/:album" component={Music} />
-
       </div>
     </ConnectedRouter>
   </Provider>
