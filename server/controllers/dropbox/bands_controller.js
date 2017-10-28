@@ -29,9 +29,10 @@ exports.update = (next) => {
   }
 };
 
-exports.get = function(req, res, next) {
-  Band.collection.find({}).toArray(function(err, result) {
+exports.get = function(next) {
+  Band.collection.find({}).toArray(function(err, data) {
     if (err) throw err;
-    res.send(result);
+    //res.send(result);
+    next(data)
   });
 };

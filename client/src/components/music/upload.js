@@ -8,7 +8,6 @@ import DropzoneComponent from 'react-dropzone-component';
 export default class Upload extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
 
     // For a full list of possible configurations,
     // please consult http://www.dropzonejs.com/#configuration
@@ -33,7 +32,6 @@ export default class Upload extends React.Component {
     this.addedfile = file => console.log(file);
     this.processingmultiple = files => console.log(files);
     this.sending = (file, xhr, formData) => {
-      console.log(xhr);
       if(file.fullPath){
         formData.append('fullPath', file.fullPath),
         formData.append('band', props.band)

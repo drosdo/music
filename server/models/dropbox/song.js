@@ -10,7 +10,8 @@ const SongSchema = new Schema({
   bpm: String,
   album: String,
   tempSongLink: Object,
-  tempWaveLink: Object
+  tempWaveLink: Object,
+  wave: Object
 });
 
 // Create the model class

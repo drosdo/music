@@ -11,7 +11,13 @@ import {
   GET_BANDS,
   UPDATE_ALBUMS,
   GET_ALBUMS,
-  GET_SONGS
+  GET_SONGS,
+  SELECT_ALBUM,
+  SELECT_BAND,
+  GET_BANDS_ALBUMS,
+  GET_MUSIC,
+  REQUEST_MUSIC,
+  RECEIVE_MUSIC
 } from './types';
 
 const ROOT_URL = 'http://localhost:3090';
@@ -100,122 +106,8 @@ export function signoutUser() {
 //       });
 //   };
 // }
-export function getSongList(path, foo) {
-  return function(dispatch) {
-    axios
-      .get(ROOT_URL + '/get_song_list', {
-        headers: { authorization: localStorage.getItem('token') },
-        params: {
-          foo,
-          path
-        }
-      })
-      .then(response => {
-        console.log(response);
-        if (response.data === 'wrong') {
-          dispatch({
-            type: UNAUTH_GUEST,
-            payload: response.data
-          });
-          dispatch(push('/signin'));
-        } else {
-          dispatch({
-            type: AUTH_GUEST,
-            payload: response.data
-          });
-        }
-      })
-      .catch(response => {
-        dispatch(push('/signin'));
-        dispatch({
-          type: UNAUTH_GUEST,
-          payload: response
-        });
-      });
-  };
-}
-
-export function getBands(path, foo) {
-  return function(dispatch) {
-    axios
-      .get(ROOT_URL + '/get_bands')
-      .then(response => {
-        console.log(response);
-        dispatch({
-          type: GET_BANDS,
-          payload: response.data
-        });
-      })
-      .catch(response => {
-
-      });
-  };
-}
 
 
-export function getAlbums(band) {
-  return function(dispatch) {
-    axios
-      .get(ROOT_URL + '/get-albums', {
-        params: {
-          band
-        }
-      })
-      .then(response => {
-        console.log('get-albums',response);
-        dispatch({
-          type: GET_ALBUMS,
-          payload: response.data
-        });
-      })
-      .catch(response => {
-
-      });
-  };
-}
-
-export function getSongs(band, album) {
-  return function(dispatch) {
-    axios
-      .get(ROOT_URL + '/get-songs', {
-        params: {
-          band,
-          album
-        }
-      })
-      .then(response => {
-        console.log('get-songs',response);
-        dispatch({
-          type: GET_SONGS,
-          payload: response.data
-        });
-      })
-      .catch(response => {
-
-      });
-  };
-}
-
-export function updateAlbums(band) {
-  return function(dispatch) {
-    axios
-      .get(ROOT_URL + '/update_albums', {
-        params: {
-          band
-        }
-      })
-      .then(response => {
-        console.log('updateAlbums', response);
-        dispatch({
-          type: UPDATE_ALBUMS,
-          payload: response.data
-        });
-      })
-      .catch(response => {
-
-      });
-  };
-}
 
 
 export function fetchMessage() {
@@ -230,5 +122,55 @@ export function fetchMessage() {
           payload: response.data.message
         });
       });
+  };
+}
+
+function requestMusic() {
+  return {
+    type: REQUEST_MUSIC
+  };
+}
+function receiveMusic(data) {
+  return {
+    type: RECEIVE_MUSIC,
+    payload: data,
+    receivedAt: Date.now()
+  };
+}
+
+function fetchMusic() {
+  return dispatch => {
+    dispatch(requestMusic());
+    return axios.get(ROOT_URL + '/get-music').then(response => {
+      dispatch(receiveMusic(response.data));
+    });
+  };
+}
+
+function shouldFetchMusic(state) {
+  const music = state.music;
+  if (!music.items.length) {
+    return true;
+  } else if (music.isFetching) {
+    return false;
+  } else {
+    return music.didInvalidate;
+  }
+}
+
+export function fetchMusicIfNeeded() {
+  // Note that the function also receives getState()
+  // which lets you choose what to dispatch next.
+
+  // This is useful for avoiding a network request if
+  // a cached value is already available.
+  return (dispatch, getState) => {
+    if (shouldFetchMusic(getState())) {
+      // Dispatch a thunk from thunk!
+      return dispatch(fetchMusic());
+    } else {
+      // Let the calling code know there's nothing to wait for.
+      return Promise.resolve();
+    }
   };
 }

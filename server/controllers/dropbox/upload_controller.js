@@ -6,7 +6,7 @@ const Band = require('../../models/dropbox/band');
 const Song = require('../../models/dropbox/song');
 const Albums = require('./albums_controller');
 const async = require('async');
-
+const jsonSource = require("stream-json");
 const dropbox = require('../../services/dropbox');
 
 const storage = multer.diskStorage({
@@ -49,7 +49,9 @@ class Upload {
       this.files,
       (file, callback) => {
         let source = `./files/${file.filename}`;
-        let waveName = `${file.filename.replace(/\.[^/.]+$/, '')}.dat`;
+        //let waveName = `${file.filename.replace(/\.[^/.]+$/, '')}.dat`;
+        let waveName = `${file.filename.replace(/\.[^/.]+$/, '')}.json`;
+
         let wave = `./files/${waveName}`;
         let wavePath = `/waves/${this.band}/${this.folderName}/${waveName}`;
         let songPath = `/Music/${this.band}/${this
@@ -58,13 +60,8 @@ class Upload {
           {
             // create wave
             wave: callback => {
-              this.createWaveFile(source, wave, callback);
+              this.createWaveJSON(source, wave, callback);
             }, // upload wave
-            uploadedWave: callback => {
-              console.log('start upload wave', wave);
-              let readStream = fs.createReadStream(wave);
-              dropbox.uploadFile2(wavePath, readStream, callback);
-            }, //upload song
             uploadedSong: callback => {
               console.log('start upload song', source);
               fs.unlinkSync(wave);
@@ -74,7 +71,7 @@ class Upload {
           },
           (err, data) => {
             if (err) return callback(err);
-
+            console.log(data.wave);
             fs.unlinkSync(source);
             //save to db
             let songData = {
@@ -82,7 +79,8 @@ class Upload {
               band: this.band,
               createdTime: data.uploadedSong.client_modified,
               size: data.uploadedSong.size,
-              album: this.folderName
+              album: this.folderName,
+              wave:data.wave
             };
             let song = new Song(songData);
             console.log('songUploaded', songData);
@@ -100,7 +98,28 @@ class Upload {
       }
     );
   }
+  // CREATE WAVE FILE
+  createWaveJSON(source, wave, next) {
+    let audiowave = require('child_process').spawn('audiowaveform', [
+      '-i',
+      source,
+      '-o',
+      wave,
+      '-z',
+      '256',
+      '-b',
+      '8'
+    ]);
 
+    audiowave
+      .on('close', (code, signal) => {
+        fs.readFile(wave, 'utf8', function(err, data) {
+          //var obj = JSON.parse(data);
+          next(err, data)
+        });
+      })
+      .on('error', err => next(err));
+  }
   // CREATE WAVE FILE
   createWaveFile(source, wave, next) {
     let audiowave = require('child_process').spawn('audiowaveform', [
@@ -128,7 +147,6 @@ class Upload {
   error(err) {
     this.res.status(500).send(err);
   }
-
 }
 
 exports.init = function(req, res, next) {

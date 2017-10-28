@@ -7,35 +7,21 @@ class Header extends Component {
     if (this.props.authenticated.authenticated) {
       // show a link to sign out
       return (
-        (
-          <li className="nav-item">
-            <Link className="nav-link"  key={1} to="/music">
-               музыка
-            </Link>
-          </li>
-        ),
-        (
-          <li className="nav-item">
-            <Link className="nav-link" key={2} to="/signout">
-              Sign Out
-            </Link>
-          </li>
-        )
+        <li className="nav-item">
+          <Link className="nav-link" key={1} to="/signout">
+            Sign Out
+          </Link>
+        </li>
       );
     } else {
       // show a link to sign in or sign up
       return [
         <li className="nav-item" key={1}>
-          <Link className="nav-link" to="/music">
-            Музыка
-          </Link>
-        </li>,
-        <li className="nav-item" key={2}>
           <Link className="nav-link" to="/signin">
             Sign In
           </Link>
         </li>,
-        <li className="nav-item" key={3}>
+        <li className="nav-item" key={2}>
           <Link className="nav-link" to="/signup">
             Sign Up
           </Link>
@@ -51,7 +37,14 @@ class Header extends Component {
           <Link to="/" className="logo">
             drosdo
           </Link>
-          <ul className="nav">{this.renderLinks()}</ul>
+          <ul className="nav">
+            <li className="nav-item" key={1}>
+              <Link className="nav-link" to="/music">
+                Музыка
+              </Link>
+            </li>
+          </ul>
+          <ul className="nav nav-right">{this.renderLinks()}</ul>
         </nav>
       </div>
     );

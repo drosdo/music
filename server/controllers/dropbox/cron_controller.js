@@ -1,10 +1,10 @@
 var CronJob = require('cron').CronJob;
-const Update = require('./update_controller');
+const Songs = require('./songs_controller');
 
 exports.add = time => {
   new CronJob(
     time,
-    Update.updateAll,
+    Songs.updateLinks,
     function() {
       console.log('cron finished');
     },

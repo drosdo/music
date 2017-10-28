@@ -3,23 +3,17 @@ const Dropbox = require('../../services/dropbox');
 const _ = require('lodash');
 const async = require('async');
 
-exports.erase = (next) => {
+exports.erase = next => {
   Album.collection.remove();
 };
-
 
 exports.update = function(band, next) {
   const path = '/Music/' + band.name;
   const recursive = false;
-  Dropbox.list_folder_all_files(
-    path,
-    saveAlbums,
-    recursive
-  );
+  Dropbox.list_folder_all_files(path, saveAlbums, recursive);
   function saveAlbums(err, albums) {
     if (err) return next(err);
-    console.log('albums', albums);
-    async.each(albums, saveAlbum, (err) => {
+    async.each(albums, saveAlbum, err => {
       next(null, albums);
     });
     function saveAlbum(album, callback) {
@@ -28,22 +22,28 @@ exports.update = function(band, next) {
         band: band.name
       });
       albumItem.save(function(err) {
-        callback(err)
+        callback(err);
       });
     }
-
-
   }
 };
 
 exports.get = function(req, res, next) {
-  Album.collection
-    .find({band: req.query.band})
-    .toArray(function(err, result) {
-      if (err) throw err;
-      res.send(result);
-    });
+  const band = new RegExp(req.query.band, 'i');
+  Album.collection.find({ band: band }).toArray(function(err, result) {
+    if (err) throw err;
+    res.send(result);
+  });
 };
+
+exports.getAll = function(next) {
+  Album.collection.find({}).toArray((err, data) => {
+    if (err) throw err;
+    next(data);
+  });
+};
+
+
 
 exports.saveAlbum = (res, name, band) => {
   //Album.collection.remove();

@@ -9,11 +9,15 @@ export default class Waveform extends React.Component {
     super(props);
   }
   componentDidMount() {
-    const { tempSongLink, tempWaveLink } = this.props.song;
+    const { tempSongLink, tempWaveLink, wave } = this.props.song;
     this.hasWaveDat = false;
 
-    if (tempWaveLink) {
-      this.getWaveFormFromDat(tempWaveLink.link);
+    if (wave) {
+      //this.getWaveFormFromDat(tempWaveLink.link);
+      const waveform = WaveformData.create(JSON.parse(wave));
+      //let waveformdata = new WaveformData(this.props.song.wave, WaveformData.adapters.object);
+      //this.getWaveFormFromLocal()
+      this.drawWave(waveform);
       this.hasWaveDat = true;
     }
     if (tempSongLink) {
@@ -57,12 +61,12 @@ export default class Waveform extends React.Component {
     });
 
     this.cursorCanvas.addEventListener('click', e => {
-      if(this.isAudioLoaded) {
+      if (this.isAudioLoaded) {
         let pos = e.pageX - this.cursorCanvas.offsetLeft;
         let currentTime =
           pos * this.audioTag.duration / this.cursorCanvas.clientWidth;
         this.audioTag.currentTime = currentTime;
-      }else {
+      } else {
         this.isAudioLoaded = true;
         this.audioTagSource.src = url;
         this.audioTag.load();
@@ -98,6 +102,16 @@ export default class Waveform extends React.Component {
     console.log(url);
     axios.get(url, { responseType: 'arraybuffer' }).then(buffer => {
       const waveform = WaveformData.create(buffer.data);
+      this.drawWave(waveform);
+    });
+  }
+  getWaveFormFromLocal() {
+    console.log();
+    axios.get('/files/megariff-1.json').then(buffer => {
+      console.log(buffer.data);
+      const waveform = WaveformData.create(buffer.data);
+      console.log(waveform);
+
       this.drawWave(waveform);
     });
   }

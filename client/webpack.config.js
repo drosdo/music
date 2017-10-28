@@ -74,12 +74,13 @@ module.exports = {
   resolve: {
     extensions: ['*', '.js', '.jsx', '.css', '.styl', '.jpg'],
     alias: {
-      _fonts: path.join(appPath, 'fonts'),
-      _images: path.join(appPath, 'images')
+      _fonts: path.join(appPath, 'style', 'fonts')
     }
   },
   devServer: {
-    historyApiFallback: true,
+    historyApiFallback: {
+      disableDotRule: true
+    },
     contentBase: './'
   },
   plugins: [

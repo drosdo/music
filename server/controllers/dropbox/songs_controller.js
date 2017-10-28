@@ -5,6 +5,8 @@ const dropbox = require('../../services/dropbox');
 const _ = require('lodash');
 const async = require('async');
 const moment = require('moment');
+const fs = require('fs');
+const Cron = require('./cron_controller');
 
 exports.erase = next => {
   Song.collection.remove();
@@ -19,43 +21,46 @@ exports.update = function(album, band, next) {
 
   function saveSongs(err, songs) {
     if (err) return next(err);
-    async.each(songs, saveSong, err => {
-      next(null, songs);
-    });
-    function saveSong(song, callback) {
+
+    async.eachSeries(
+      songs,
+      (song, callback) => {
+        saveSong(song, err => {
+          console.log(song.name, ' finished');
+          callback();
+        });
+      },
+      function(err) {
+        if (err) {
+          throw err;
+        }
+        next(null, songs);
+      }
+    );
+
+    function saveSong(song, next) {
+      let songPath = `/Music/${band.name}/${album.name}/${song.name}`;
       let index = songs.indexOf(song);
       tempSongLink = {};
-      tempWaveLink = {};
-      async.series(
+      async.waterfall(
         [
           callback => {
             let path = `/Music/${band.name}/${album.name}/${song.name}`;
             dropbox.getTemporaryLink2(path, songLink);
             function songLink(err, data) {
-              if (err) return callback(err);
               tempSongLink = {
                 link: data.link,
                 expires: moment().add(4, 'hours')
               };
 
-              callback();
+              callback(null, data.link);
             }
           },
-          callback => {
-            let waveName = `${song.name.replace(/\.[^/.]+$/, '')}.dat`;
-            let path = `/waves/${band.name}/${album.name}/${waveName}`;
-            dropbox.getTemporaryLink2(path, waveLink);
-            function waveLink(err, data) {
-              if (err) return callback(err);
-              tempWaveLink = {
-                link: data.link,
-                expires: moment().add(4, 'hours')
-              };
-              callback();
-            }
+          (url, callback) => {
+            createWaveJSON(songPath, song.name, callback);
           }
         ],
-        err => {
+        (err, data) => {
           if (err) return callback(err);
           let songItem = new Song({
             name: song.name,
@@ -63,11 +68,13 @@ exports.update = function(album, band, next) {
             createdTime: song.client_modified,
             size: song.size,
             album: album.name,
-            tempWaveLink,
+            wave: data,
             tempSongLink
           });
           songItem.save(function(err) {
-            callback(err);
+            console.log('saved song ' + song.name + ' callback');
+
+            next(err);
           });
         }
       );
@@ -78,7 +85,6 @@ exports.update = function(album, band, next) {
 exports.get = function(req, res, next) {
   const band = new RegExp(req.query.band, 'i');
   const album = new RegExp(req.query.album, 'i');
-  //TODO how update templinks?
   Song.collection
     .find({
       band,
@@ -89,7 +95,106 @@ exports.get = function(req, res, next) {
       res.send(songs);
     });
 };
-function getFileLinks(band, album, song, songsLength, i) {
-  let songPath = `/Music/${band}/${album}/${song.name}`;
-  dropbox.getTemporaryLink2;
+
+exports.getAll = function(next) {
+  Song.collection.find({}).toArray((err, data) => {
+    if (err) throw err;
+    next(data);
+  });
+};
+
+function createWaveJSON(url, name, next) {
+  let waveName = `${name.replace(/\.[^/.]+$/, '')}.json`;
+  let wavePath = `./files/${waveName}`;
+  let songPath = `./files/${name}`;
+  let wave = '';
+
+  async.waterfall(
+    [
+      callback => {
+        console.log('download song', name);
+        dropbox.download(url, name, songDownloaded);
+        function songDownloaded(err, data) {
+          callback();
+        }
+      },
+      callback => {
+        // create wavefile
+        console.log('creating wavefile', name);
+
+        let audiowave = require('child_process').spawn('audiowaveform', [
+          '-i',
+          songPath,
+          '-o',
+          wavePath,
+          '-z',
+          '256',
+          '-b',
+          '8'
+        ]);
+
+        audiowave.on('close', (code, signal) => {
+          fs.readFile(wavePath, 'utf8', function(err, data) {
+            wave = data;
+            callback();
+          });
+        });
+        //.on('error', err => callback(err));
+      },
+      callback => {
+        console.log('wave-created');
+        fs.unlinkSync(songPath);
+        fs.unlinkSync(wavePath);
+        callback();
+      }
+    ],
+    err => {
+      if (err) return next(err);
+      next(null, wave);
+    }
+  );
 }
+
+exports.updateLinks = next => {
+  let myDate = new Date();
+
+  Song.collection.find().toArray((err, songs) => {
+    if (err) return next(err);
+    async.eachSeries(
+      songs,
+      (song, callback) => {
+        let path = `/Music/${song.band}/${song.album}/${song.name}`;
+        dropbox.getTemporaryLink2(path, (err, data) => {
+          if (err) {
+            return next(err);
+          }
+          console.log(song.name);
+
+          let tempSongLink = {
+            link: data.link,
+            expires: moment().add(4, 'hours')
+          };
+
+          Song.findOne({ _id: song._id }, function(err, song) {
+            if (err) {
+              return next(err);
+            }
+            song.tempSongLink = {
+              link: data.link,
+              expires: moment().add(4, 'hours')
+            };
+            song.save(callback);
+          });
+        });
+      },
+      function(err) {
+        if (err) {
+          return next(err);
+        }
+        myDate.setHours(myDate.getHours() + 4);
+        Cron.add(myDate);
+        next(null, 'song links updated');
+      }
+    );
+  });
+};
