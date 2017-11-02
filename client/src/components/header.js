@@ -3,48 +3,51 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 
 class Header extends Component {
+  static propTypes = {
+    authenticated: React.PropTypes.string
+  };
   renderLinks() {
-    if (this.props.authenticated.authenticated) {
+    if (this.props.authenticated) {
       // show a link to sign out
       return (
-        <li className="nav-item">
-          <Link className="nav-link" key={1} to="/signout">
+        <li className='nav-item'>
+          <Link className='nav-link' key={1}
+            to='/signout'>
             Sign Out
           </Link>
         </li>
       );
-    } else {
-      // show a link to sign in or sign up
-      return [
-        <li className="nav-item" key={1}>
-          <Link className="nav-link" to="/signin">
-            Sign In
-          </Link>
-        </li>,
-        <li className="nav-item" key={2}>
-          <Link className="nav-link" to="/signup">
-            Sign Up
-          </Link>
-        </li>
-      ];
     }
+    // show a link to sign in or sign up
+    return [
+      <li className='nav-item' key={1}>
+        <Link className='nav-link' to='/signin'>
+          Sign In
+        </Link>
+      </li>,
+      <li className='nav-item' key={2}>
+        <Link className='nav-link' to='/signup'>
+          Sign Up
+        </Link>
+      </li>
+    ];
   }
 
   render() {
     return (
-      <div className="header">
-        <nav className="navbar">
-          <Link to="/" className="logo">
+      <div className='header'>
+        <nav className='navbar'>
+          <Link to='/' className='logo'>
             drosdo
           </Link>
-          <ul className="nav">
-            <li className="nav-item" key={1}>
-              <Link className="nav-link" to="/music">
+          <ul className='nav'>
+            <li className='nav-item' key={1}>
+              <Link className='nav-link' to='/music'>
                 Музыка
               </Link>
             </li>
           </ul>
-          <ul className="nav nav-right">{this.renderLinks()}</ul>
+          <ul className='nav nav-right'>{this.renderLinks()}</ul>
         </nav>
       </div>
     );
@@ -53,7 +56,7 @@ class Header extends Component {
 
 function mapStateToProps(state) {
   return {
-    authenticated: state.auth
+    authenticated: state.auth.authenticated
   };
 }
 

@@ -5,6 +5,9 @@ import { withRouter } from 'react-router-dom';
 import * as actions from '../../actions';
 
 class Signout extends Component {
+  static propTypes = {
+    signoutUser: React.PropTypes.func
+  };
   componentWillMount() {
     this.props.signoutUser();
   }
@@ -14,4 +17,4 @@ class Signout extends Component {
   }
 }
 
-export default withRouter( connect(null, actions)(Signout) );
+export default withRouter(connect(null, actions)(Signout));

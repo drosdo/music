@@ -10,12 +10,6 @@ export default function(ComposedComponent) {
       router: React.PropTypes.object
     };
 
-    componentWillMount() {
-      //this.props.getSongList(this.props.match.params.id, this.props.match.params.foo);
-      //this.props.getBands()
-
-    }
-
     render() {
       return <ComposedComponent {...this.props} />;
     }

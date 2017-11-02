@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import * as actions from '../../actions';
-import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
 import DropzoneComponent from 'react-dropzone-component';
 
-export default class Upload extends React.Component {
+export default class Upload extends Component {
+  static propTypes = {
+    band: React.PropTypes.string
+  };
   constructor(props) {
     super(props);
-
     // For a full list of possible configurations,
     // please consult http://www.dropzonejs.com/#configuration
     this.djsConfig = {
@@ -32,11 +30,10 @@ export default class Upload extends React.Component {
     this.addedfile = file => console.log(file);
     this.processingmultiple = files => console.log(files);
     this.sending = (file, xhr, formData) => {
-      if(file.fullPath){
-        formData.append('fullPath', file.fullPath),
-        formData.append('band', props.band)
+      if (file.fullPath) {
+        formData.append('fullPath', file.fullPath);
+        formData.append('band', props.band);
       }
-
     };
 
     this.removedfile = file => console.log('removing...', file);

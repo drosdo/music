@@ -2,12 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import { withRouter, Link } from 'react-router-dom';
-import _ from 'lodash';
 
 class Albums extends Component {
+  static propTypes = {
+    albums: React.PropTypes.object,
+    band: React.PropTypes.object
+  };
 
   renderAlbums() {
     const { albums, band } = this.props;
+
     return albums.valueSeq().map(album => {
       let path = `/music/${band}/${album.get('name').toLowerCase()}`;
       return (
@@ -19,7 +23,6 @@ class Albums extends Component {
   }
 
   render() {
-    const { albums, band } = this.props;
     return (
       <div>
         <h1>Albums</h1>
@@ -34,7 +37,7 @@ function mapStateToProps(state, ownProps) {
     ...ownProps,
     guest: state.auth.guest,
     authenticated: state.auth.authenticated
-    };
+  };
 }
 
 export default withRouter(connect(mapStateToProps, actions)(Albums));

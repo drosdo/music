@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-
 export default function(ComposedComponent) {
   class Authentication extends Component {
-    static contextTypes = {
-      router: React.PropTypes.object
-    }
+    static propTypes = {
+      router: React.PropTypes.object,
+      authenticated: React.PropTypes.bool,
+      history: React.PropTypes.object
+    };
 
     componentWillMount() {
       if (!this.props.authenticated) {
@@ -22,7 +23,7 @@ export default function(ComposedComponent) {
     }
 
     render() {
-      return <ComposedComponent {...this.props} />
+      return <ComposedComponent {...this.props} />;
     }
   }
 

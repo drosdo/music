@@ -6,15 +6,10 @@ import { createStore, applyMiddleware } from 'redux';
 import createHistory from 'history/createBrowserHistory';
 import { Route } from 'react-router';
 import 'babel-polyfill';
-import { Map, List, fromJS } from 'immutable';
+import { List } from 'immutable';
 import { fetchMusicIfNeeded } from './actions';
 
-import {
-  ConnectedRouter,
-  routerReducer,
-  routerMiddleware,
-  push
-} from 'react-router-redux';
+import { ConnectedRouter, routerMiddleware } from 'react-router-redux';
 
 import reduxThunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
@@ -32,10 +27,10 @@ import Signup from './components/auth/signup';
 import Feature from './components/feature';
 import Music from './components/music/';
 
-import RequireAuth from './components/auth/require_auth';
-import MusicRedirect from './components/music/redirect';
+import requireAuth from './components/auth/require_auth';
+import musicRedirect from './components/music/redirect';
 
-import GuestAccessFor from './components/auth/require_auth_or_url';
+// import GuestAccessFor from './components/auth/require_auth_or_url';
 import Welcome from './components/welcome';
 import { AUTH_USER } from './actions/types';
 import reducers from './reducers';
@@ -53,6 +48,7 @@ const initialState = {
   music: {
     isFetching: true,
     didInvalidate: false,
+    playingSongId: '',
     items: {
       bands: new List(),
       albums: new List(),
@@ -77,20 +73,23 @@ if (token) {
   store.dispatch({ type: AUTH_USER });
 }
 store.dispatch(fetchMusicIfNeeded());
-document.addEventListener('DOMContentLoaded', function(event) {
+document.addEventListener('DOMContentLoaded', function() {
   ReactDOM.render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
-        <div className="container2">
+        <div className='container2'>
           <Header />
-          <Route exact path="/" component={Welcome} />
-          <Route path="/signin" component={Signin} />
-          <Route path="/signout" component={Signout} />
-          <Route path="/signup" component={Signup} />
-          <Route path="/feature" component={RequireAuth(Feature)} />
-          <Route exact path="/music" component={MusicRedirect(Music)} />
-          <Route exact path="/music/:band/" component={MusicRedirect(Music)} />
-          <Route path="/music/:band/:album" component={Music} />
+          <Route exact path='/'
+            component={Welcome} />
+          <Route path='/signin' component={Signin} />
+          <Route path='/signout' component={Signout} />
+          <Route path='/signup' component={Signup} />
+          <Route path='/feature' component={requireAuth(Feature)} />
+          <Route exact path='/music'
+            component={musicRedirect(Music)} />
+          <Route exact path='/music/:band/'
+            component={musicRedirect(Music)} />
+          <Route path='/music/:band/:album' component={Music} />
         </div>
       </ConnectedRouter>
     </Provider>,

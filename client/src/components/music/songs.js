@@ -2,36 +2,42 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
+import styles from './style/music.styl';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 
 import Waveform from './waveform';
 
 class Songs extends Component {
-  componentWillMount() {
-    const { band, album } = this.props;
-  }
-  componentDidUpdate(prevProps) {
-    // const { band, album } = this.props;
-    // if (prevProps.album !== album) {
-    //   this.props.getSongs(band, album);
-    // }
+  static propTypes = {
+    album: React.PropTypes.string,
+    authenticated: React.PropTypes.bool,
+    band: React.PropTypes.string,
+    isFetching: React.PropTypes.bool,
+    playingSongId: React.PropTypes.string,
+    setPlayingSong: React.PropTypes.func,
+    songs: ImmutablePropTypes.list
+  };
+
+  setPlayingSong(id) {
+    this.props.setPlayingSong(id);
   }
 
   renderSongs() {
-    const { songs } = this.props;
+    const { songs, playingSongId } = this.props;
     return songs.valueSeq().map(song => {
-      return <Waveform key={song.get('_id')} song={song.toJS()} />;
+      return (
+        <Waveform
+          key={song.get('_id')}
+          playingSongId={playingSongId}
+          setPlayingSong={this.setPlayingSong.bind(this)}
+          song={song.toJS()}
+        />
+      );
     });
   }
 
   render() {
-    const { band, album } = this.props;
-    return (
-      <div>
-        <h1>Songs for {album}</h1>
-        {this.renderSongs()}
-      </div>
-    );
+    return <div className={styles.songs}>{this.renderSongs()}</div>;
   }
 }
 
@@ -39,8 +45,9 @@ function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
     guest: state.auth.guest,
-    authenticated: state.auth.authenticated
-    };
+    authenticated: state.auth.authenticated,
+    playingSongId: state.music.playingSongId
+  };
 }
 
 export default withRouter(connect(mapStateToProps, actions)(Songs));

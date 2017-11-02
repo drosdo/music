@@ -7,7 +7,7 @@ import {
   UNAUTH_GUEST
 } from '../actions/types';
 
-export default function(state={}, action) {
+export default function(state = {}, action) {
   switch (action.type) {
     case AUTH_USER:
       return { ...state, error: '', authenticated: true };
@@ -21,7 +21,7 @@ export default function(state={}, action) {
       return { ...state, songList: action.payload, guest: true };
     case UNAUTH_GUEST:
       return { ...state, folder: action.payload, guest: false };
+    default:
+      return state;
   }
-
-  return state;
 }

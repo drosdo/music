@@ -5,8 +5,6 @@
   "main": "index.js",
   "repository": "git@github.com:StephenGrider/ReduxSimpleStarter.git",
   "scripts": {
-    "dev": "NODE_ENV=development webpack-dev-server --progress -p --host 127.0.0.1 --port 8080",
-    "build": "rm -rf dist/* && NODE_ENV=production webpack --colors",
     "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --progress -p --host 127.0.0.1 --port 8080",
     "test": "mocha --compilers js:babel-core/register --require ./test/test_helper.js --recursive ./test",
     "test:watch": "npm run test -- --watch"
@@ -41,13 +39,13 @@
     "stylus-loader": "^3.0.1",
     "url-loader": "^0.6.2",
     "webpack": "^3.6.0",
-    "webpack-bundle-analyzer": "^2.9.0",
-    "webpack-dev-server": "^2.8.2",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-stage-1": "^6.1.18"
+    "webpack-dev-server": "^2.8.2"
   },
   "dependencies": {
     "axios": "^0.16.2",
+    "axios-cache-plugin": "^0.1.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-stage-1": "^6.1.18",
     "classnames": "^2.2.5",
     "history": "^4.7.2",
     "immutable": "^3.8.2",
@@ -57,7 +55,6 @@
     "react-dropzone": "^4.1.3",
     "react-dropzone-component": "^2.0.0",
     "react-fileupload": "^2.4.0",
-    "react-immutable-proptypes": "^2.1.0",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
@@ -71,6 +68,7 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",
     "resolve-url-loader": "^2.1.1",
+    "shortid": "^2.2.8",
     "waveform-data": "^2.0.1"
   }
 }

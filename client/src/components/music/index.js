@@ -8,8 +8,18 @@ import Songs from './songs';
 import Upload from './upload';
 import styles from './style/music.styl';
 import cx from 'classnames';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 
 class Music extends Component {
+  static propTypes = {
+    albums: ImmutablePropTypes.list,
+    authenticated: React.PropTypes.bool,
+    bands: ImmutablePropTypes.list,
+    guest: React.PropTypes.obj,
+    isFetching: React.PropTypes.bool,
+    match: React.PropTypes.obj,
+    songs: ImmutablePropTypes.list
+  };
   // componentWillMount() {
   //   const { band, album } = this.props.match.params;
   //   const selectedBand = !band ? null : band;
@@ -45,43 +55,47 @@ class Music extends Component {
   }
   render() {
     const { band, album } = this.props.match.params;
-    const { songs, bands, albums, isFetching } = this.props;
+    const { songs, albums, isFetching } = this.props;
     let songsPerAlbum;
-    let albumsPerBand
+    let albumsPerBand;
 
     if (!isFetching) {
-       songsPerAlbum = songs.filter(
+      songsPerAlbum = songs.filter(
         song => song.get('album').toLowerCase() === album
       );
-       albumsPerBand = albums.filter(
-        album => album.get('band').toLowerCase() === band
+      albumsPerBand = albums.filter(
+        albumItem => albumItem.get('band').toLowerCase() === band
       );
     }
-    
+
     return (
-      <div>
-        <ul className="subnav">
+      <div className='container3'>
+        <ul className='subnav'>
           {!isFetching ? this.renderBands() : 'loading...'}
         </ul>
-        <div className="wrap">
-          <div className="sidebar">
+        <div className='wrap'>
+          <div className='sidebar'>
             {!isFetching ? (
               <Albums band={band} albums={albumsPerBand} />
             ) : (
               'loading...'
             )}
           </div>
-          <div className="content">
+          <div className='content'>
             {!isFetching ? (
               <div className={styles.music}>
-                <Songs band={band} album={album} songs={songsPerAlbum} />
-                <Upload band={band} />
+                <h1>Songs for {album}</h1>
+                <Songs band album
+                  songs={songsPerAlbum} />
               </div>
             ) : (
               'loading...'
             )}
           </div>
-          <div className="sidebar">side 2</div>
+          <div className='sidebar'>side 2</div>
+        </div>
+        <div className='footer'>
+          <Upload band={band} />
         </div>
       </div>
     );
@@ -89,13 +103,19 @@ class Music extends Component {
 }
 
 function mapStateToProps(state) {
+  const {
+    music: isFetching,
+    items: { bands, albums, songs }
+  } = state.music;
+  const { authenticated, guest } = state.auth;
+
   return {
-    isFetching: state.music.isFetching,
-    guest: state.auth.guest,
-    bands: state.music.items.bands,
-    albums: state.music.items.albums,
-    songs: state.music.items.songs,
-    authenticated: state.auth.authenticated
+    isFetching,
+    guest,
+    bands,
+    albums,
+    songs,
+    authenticated
   };
 }
 

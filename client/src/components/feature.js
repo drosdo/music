@@ -3,16 +3,17 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 import { withRouter } from 'react-router-dom';
 
-
 class Feature extends Component {
+  static propTypes = {
+    fetchMessage: React.PropTypes.func,
+    message: React.PropTypes.string
+  };
   componentWillMount() {
     this.props.fetchMessage();
   }
 
   render() {
-    return (
-       <div>{this.props.message}</div>
-    );
+    return <div>{this.props.message}</div>;
   }
 }
 

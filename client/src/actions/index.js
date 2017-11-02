@@ -5,23 +5,13 @@ import {
   UNAUTH_USER,
   AUTH_ERROR,
   FETCH_MESSAGE,
-  AUTH_GUEST,
-  UNAUTH_GUEST,
-  GET_SONG_LIST,
-  GET_BANDS,
-  UPDATE_ALBUMS,
-  GET_ALBUMS,
-  GET_SONGS,
-  SELECT_ALBUM,
-  SELECT_BAND,
-  GET_BANDS_ALBUMS,
-  GET_MUSIC,
   REQUEST_MUSIC,
-  RECEIVE_MUSIC
+  RECEIVE_MUSIC,
+  PLAYING_SONG
 } from './types';
 
 const ROOT_URL = 'http://localhost:3090';
-//const ROOT_URL = 'http://37be1641.ngrok.io';
+// const ROOT_URL = 'http://37be1641.ngrok.io';
 
 export function signinUser({ email, password }) {
   return function(dispatch) {
@@ -107,9 +97,6 @@ export function signoutUser() {
 //   };
 // }
 
-
-
-
 export function fetchMessage() {
   return function(dispatch) {
     axios
@@ -153,9 +140,8 @@ function shouldFetchMusic(state) {
     return true;
   } else if (music.isFetching) {
     return false;
-  } else {
-    return music.didInvalidate;
   }
+  return music.didInvalidate;
 }
 
 export function fetchMusicIfNeeded() {
@@ -168,9 +154,15 @@ export function fetchMusicIfNeeded() {
     if (shouldFetchMusic(getState())) {
       // Dispatch a thunk from thunk!
       return dispatch(fetchMusic());
-    } else {
-      // Let the calling code know there's nothing to wait for.
-      return Promise.resolve();
     }
+    // Let the calling code know there's nothing to wait for.
+    return Promise.resolve();
+  };
+}
+
+export function setPlayingSong(id) {
+  return {
+    type: PLAYING_SONG,
+    payload: id
   };
 }

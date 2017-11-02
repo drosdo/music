@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 
 export default function(ComposedComponent) {
-  class Authentication extends Component {
-    // static contextTypes = {
-    //   router: React.PropTypes.object
-    // }
+  class MusicRedirect extends Component {
+    static propTypes = {
+      albums: ImmutablePropTypes.list,
+      bands: ImmutablePropTypes.list,
+      isFetching: React.PropTypes.bool,
+      match: React.PropTypes.obj,
+      history: React.PropTypes.obj
+    };
 
     componentWillMount() {
       const { isFetching, bands, albums } = this.props;
@@ -14,9 +19,20 @@ export default function(ComposedComponent) {
       const hasAlbums = albums.size > 0;
 
       if (hasBands && hasAlbums && !isFetching) {
-         this.redirectIfNeedIt(bands, albums);
+        this.redirectIfNeedIt(bands, albums);
       }
     }
+
+    componentWillReceiveProps(nextProps) {
+      const { bands, albums, isFetching } = nextProps;
+      const hasBands = bands.size > 0;
+      const hasAlbums = albums.size > 0;
+
+      if (hasBands && hasAlbums && !isFetching) {
+        this.redirectIfNeedIt(bands, albums);
+      }
+    }
+
     getDefaultBand(bands) {
       return bands
         .first()
@@ -33,7 +49,8 @@ export default function(ComposedComponent) {
         .get('name')
         .toLowerCase();
     }
-    redirectIfNeedIt(bands, albums){
+
+    redirectIfNeedIt(bands, albums) {
       const { band, album } = this.props.match.params;
       const selectedBand = !band ? null : band;
       const selectedAlbum = !album ? null : album;
@@ -50,15 +67,6 @@ export default function(ComposedComponent) {
         this.props.history.push(`/music/${selectedBand}/${defaultAlbum}`);
       }
     }
-    componentWillReceiveProps(nextProps) {
-      const {bands, albums, isFetching} = nextProps;
-      const hasBands = bands.size > 0;
-      const hasAlbums = albums.size > 0;
-
-      if (hasBands && hasAlbums && !isFetching) {
-        this.redirectIfNeedIt(bands, albums);
-      }
-    }
 
     render() {
       return <ComposedComponent {...this.props} />;
@@ -73,5 +81,5 @@ export default function(ComposedComponent) {
     };
   }
 
-  return withRouter(connect(mapStateToProps)(Authentication));
+  return withRouter(connect(mapStateToProps)(MusicRedirect));
 }
