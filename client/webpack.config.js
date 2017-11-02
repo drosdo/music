@@ -27,7 +27,7 @@ const _load = function() {
     _configs.global(__dirname),
     _configs[ENV](__dirname)
   );
-  console.log(config.module.rules.map(rule=>rule.use));
+//  console.log(config.module.rules.map(rule=>rule.use));
   return config;
 };
 
