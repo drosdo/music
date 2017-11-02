@@ -1,0 +1,250 @@
+@import url(https://fonts.googleapis.com/css?family=Limelight);.music__eqSem {
+  color: #000;
+  height: 100%;
+  overflow: hidden;
+}
+.songs__hWcSn {
+  height: calc(100% - 60px);
+  overflow: auto;
+}
+.player__1z93c {
+  margin-bottom: 10px;
+}
+.player__1z93c audio {
+  display: none;
+}
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+html {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit;
+}
+html,
+body {
+  height: 100%;
+  width: 100%;
+  font-family: 'museo', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+html {
+  font-size: 62.5%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-feature-settings: 'kern' 1;
+          font-feature-settings: 'kern' 1;
+  -webkit-font-kerning: normal;
+          font-kerning: normal;
+}
+a,
+a:hover {
+  text-decoration: none;
+  color: #000;
+}
+a:focus {
+  outline: none;
+  border: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 0;
+}
+h3 {
+  font-weight: 400;
+}
+ul,
+li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+@font-face {
+  font-family: 'WebServeroff';
+  src: url(/assets/static/eot/web_serveroff-webfont.7a162d0cbfe4b830c019da415ffe14fa.eot);
+  src: url(/assets/static/eot/web_serveroff-webfont.7a162d0cbfe4b830c019da415ffe14fa.eot?#iefix) format('embedded-opentype'), url(/assets/static/woff/web_serveroff-webfont.5fcd96628030825ed5a1ce092af4028a.woff) format('woff'), url(/assets/static/ttf/web_serveroff-webfont.67d45ca4a8c7aa93100ad748cf69e9e1.ttf) format('truetype'), url(/assets/static/svg/web_serveroff-webfont.8c0335ae1f7f8c36b9f997d44773a3a4.svg) format('svg');
+  font-weight: 'normal';
+  font-style: normal;
+}
+@font-face {
+  font-family: 'ukijqolyazma';
+  src: url(/assets/static/eot/ukijqolyazma-webfont.5007ef3191da871f90bd6c6317596548.eot);
+  src: url(/assets/static/eot/ukijqolyazma-webfont.5007ef3191da871f90bd6c6317596548.eot?#iefix) format('embedded-opentype'), url(/assets/static/woff/ukijqolyazma-webfont.07d827ffa5f6af71eddd1a87b2dd3f4a.woff) format('woff'), url(/assets/static/ttf/ukijqolyazma-webfont.83be190a1661131294425bb02422f244.ttf) format('truetype'), url(/assets/static/svg/ukijqolyazma-webfont.8f5c344445ca31b7da8cebc87f5e5c0f.svg) format('svg');
+  font-weight: 'normal';
+  font-style: normal;
+}
+@font-face {
+  font-family: 'museo';
+  src: url(/assets/static/eot/MuseoSansCyrl_500-webfont.4880bf4ea606ca52b7fef4e9ab8874c1.eot);
+  src: url(/assets/static/eot/MuseoSansCyrl_500-webfont.4880bf4ea606ca52b7fef4e9ab8874c1.eot?#iefix) format('embedded-opentype'), url(/assets/static/woff/MuseoSansCyrl_500-webfont.fd60755242ab6ed777f68e80b4c9b37f.woff) format('woff'), url(/assets/static/ttf/MuseoSansCyrl_500-webfont.843171263c65549a7147f2e99d313964.ttf) format('truetype'), url(/assets/static/svg/MuseoSansCyrl_500-webfont.f3cb7395090ad74ac72419d388d0a7b3.svg) format('svg');
+  font-weight: 'normal';
+  font-style: normal;
+}
+.container {
+  font-size: 1.6rem;
+  height: 100%;
+  line-height: 1.1;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+.container2 {
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+}
+.container3 {
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+}
+.header {
+  padding: 20px;
+}
+.logo {
+  color: #000;
+  font-family: 'Limelight', cursive;
+  font-size: 48px;
+}
+.navbar {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.nav {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  padding: 0 20px;
+}
+.nav-right {
+  -webkit-box-flex: 0;
+      -ms-flex-positive: 0;
+          flex-grow: 0;
+}
+.nav-right .nav-item {
+  font-size: 10px;
+}
+.nav-item {
+  font-size: 24px;
+  margin: 0 10px;
+}
+.wrap {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: calc(100% - 240px);
+  overflow: hidden;
+}
+.footer {
+  height: 100px;
+  padding: 20px;
+  text-align: center;
+  width: 100%;
+}
+.subnav {
+  border-bottom: 6px solid #debbff;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+}
+.subnav__item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  font-family: WebServeroff, sans-serif;
+  font-size: 2.6rem;
+  line-height: 0.8;
+  line-height: 1.4;
+  margin-bottom: -9px;
+  padding: 0 10px;
+}
+.subnav__item a {
+  display: block;
+}
+.subnav__item._active {
+  border-bottom: 12px solid #debbff;
+  font-size: 3.5rem;
+  line-height: 1;
+  margin-bottom: -6px;
+}
+.subnav__item._active a {
+  margin-bottom: -12px;
+}
+.sidebar {
+  height: 100%;
+  overflow-y: scroll;
+  width: 200px;
+}
+.content {
+  min-width: 500px;
+  width: 70%;
+}
+
+/*# sourceMappingURL=main.eb8fc94ba8b54dae43e4.css.map*/

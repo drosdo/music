@@ -7,11 +7,11 @@
 const _configs = {
 
   // global section
-  global: require(__dirname + '/config/webpack/global'),
+  global: require(__dirname + '/config/webpack/common'),
 
   // config by enviroments
-  production: require(__dirname + '/config/webpack/environments/production'),
-  development: require(__dirname + '/config/webpack/environments/development')
+  production: require(__dirname + '/config/webpack/production'),
+  development: require(__dirname + '/config/webpack/development')
 };
 
 /**
@@ -20,15 +20,15 @@ const _configs = {
  * @return {[type]}            [description]
  */
 const _load = function() {
-  console.log('process.env.NODE_ENV', process.env.NODE_ENV);
   var ENV = process.env.NODE_ENV
     ? process.env.NODE_ENV
     : 'production';
-
-  return mergeDeep(
-    _configs[ENV](__dirname),
-    _configs.global(__dirname)
+  var config = mergeDeep(
+    _configs.global(__dirname),
+    _configs[ENV](__dirname)
   );
+  console.log(config.module.rules.map(rule=>rule.use));
+  return config;
 };
 
 /**
