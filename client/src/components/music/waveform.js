@@ -6,12 +6,8 @@ export default class Waveform extends React.Component {
   static propTypes = {
     playingSongId: React.PropTypes.string,
     setPlayingSong: React.PropTypes.func,
-    song: React.PropTypes.obj
+    song: React.PropTypes.object
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   state = {
     isPlaying: false,
@@ -89,7 +85,6 @@ export default class Waveform extends React.Component {
 
   onCursorCanvasCLick(e) {
     const { isAudioLoaded, audioDuration } = this.state;
-
     if (isAudioLoaded && audioDuration) {
       let pos = e.pageX - this.cursorCanvas.offsetLeft;
       let currentTime = pos * audioDuration / this.cursorCanvas.clientWidth;

@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import { withRouter, Link } from 'react-router-dom';
+import ImmutablePropTypes from 'react-immutable-proptypes';
+
 
 class Albums extends Component {
   static propTypes = {
-    albums: React.PropTypes.object,
-    band: React.PropTypes.object
+    albums: ImmutablePropTypes.list,
+    band: React.PropTypes.string
   };
 
   renderAlbums() {

@@ -4,7 +4,7 @@ import { Link, withRouter } from 'react-router-dom';
 
 class Header extends Component {
   static propTypes = {
-    authenticated: React.PropTypes.string
+    authenticated: React.PropTypes.bool
   };
   renderLinks() {
     if (this.props.authenticated) {

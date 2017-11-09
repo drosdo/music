@@ -15,27 +15,16 @@ class Music extends Component {
     albums: ImmutablePropTypes.list,
     authenticated: React.PropTypes.bool,
     bands: ImmutablePropTypes.list,
-    guest: React.PropTypes.obj,
     isFetching: React.PropTypes.bool,
-    match: React.PropTypes.obj,
+    match: React.PropTypes.shape({
+      params: React.PropTypes.shape({
+        band: React.PropTypes.node,
+        album: React.PropTypes.node
+      }).isRequired
+    }).isRequired,
     songs: ImmutablePropTypes.list
   };
-  // componentWillMount() {
-  //   const { band, album } = this.props.match.params;
-  //   const selectedBand = !band ? null : band;
-  //   const selectedAlbum = !album ? null : album;
-  //
-  //   //this.props.getMusic(selectedBand, selectedAlbum);
-  // }
-  // componentDidMount() {
-  //   console.log('componentDidMount');
-  // }
-  // componentDidUpdate() {
-  //   console.log('componentDidUpdate');
-  // }
-  // shouldComponentUpdate(nextProps){
-  //   console.log(nextProps.bands);
-  // }
+
   renderBands() {
     const bandSelected = this.props.match.params.band;
     const { bands } = this.props;
@@ -85,7 +74,7 @@ class Music extends Component {
             {!isFetching ? (
               <div className={styles.music}>
                 <h1>Songs for {album}</h1>
-                <Songs band album
+                <Songs band={band} album={album}
                   songs={songsPerAlbum} />
               </div>
             ) : (
@@ -103,15 +92,11 @@ class Music extends Component {
 }
 
 function mapStateToProps(state) {
-  const {
-    music: isFetching,
-    items: { bands, albums, songs }
-  } = state.music;
-  const { authenticated, guest } = state.auth;
+  const { music: isFetching, items: { bands, albums, songs } } = state.music;
+  const { authenticated } = state.auth;
 
   return {
     isFetching,
-    guest,
     bands,
     albums,
     songs,
