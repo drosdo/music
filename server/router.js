@@ -39,15 +39,9 @@ module.exports = app => {
   });
   app.post('/signin', requireSignin, Authentification.signin);
   app.post('/signup', Authentification.signup);
-  app.get('/update-bands', Bands.update);
-  app.get('/get_bands', Bands.get);
-  app.get('/get-bands-albums', Music.get);
+  app.get('/get-music-by-album', Music.getByAlbum);
   app.get('/get-music', Music.getAll);
-
-  app.get('/update-albums', Albums.update);
-  app.get('/get-albums', Albums.get);
-  app.get('/get-songs', Songs.get);
-  app.get('/get-dropbox-file-link', dropbox.getTemporaryLink);
+  app.get('/search', Songs.search);
   app.get('/update-all', (req, res) => {
     Update.updateAll(onUpdate);
     function onUpdate(err) {

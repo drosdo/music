@@ -7,7 +7,6 @@ import createHistory from 'history/createBrowserHistory';
 import { Route } from 'react-router';
 import 'babel-polyfill';
 import { List } from 'immutable';
-import { fetchMusicIfNeeded } from './actions';
 
 import { ConnectedRouter, routerMiddleware } from 'react-router-redux';
 
@@ -26,6 +25,7 @@ import Signout from './components/auth/signout';
 import Signup from './components/auth/signup';
 import Feature from './components/feature';
 import Music from './components/music/';
+import Search from './components/music/search-results';
 
 import requireAuth from './components/auth/require_auth';
 import musicRedirect from './components/music/redirect';
@@ -72,7 +72,7 @@ if (token) {
   // we need to update application state
   store.dispatch({ type: AUTH_USER });
 }
-store.dispatch(fetchMusicIfNeeded());
+
 document.addEventListener('DOMContentLoaded', function() {
   ReactDOM.render(
     <Provider store={store}>
@@ -87,6 +87,9 @@ document.addEventListener('DOMContentLoaded', function() {
           <Route path='/feature' component={requireAuth(Feature)} />
           <Route exact path='/music'
             component={musicRedirect(Music)} />
+          <Route exact path='/search'
+            component={Search} />
+
           <Route exact path='/music/:band/'
             component={musicRedirect(Music)} />
           <Route path='/music/:band/:album' component={Music} />

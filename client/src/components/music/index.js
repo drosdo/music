@@ -16,6 +16,7 @@ class Music extends Component {
     authenticated: React.PropTypes.bool,
     bands: ImmutablePropTypes.list,
     isFetching: React.PropTypes.bool,
+    getMusicByAlbum: React.PropTypes.func,
     match: React.PropTypes.shape({
       params: React.PropTypes.shape({
         band: React.PropTypes.node,
@@ -24,7 +25,34 @@ class Music extends Component {
     }).isRequired,
     songs: ImmutablePropTypes.list
   };
+  componentDidMount() {
+    const { band, album } = this.props.match.params;
+    const { songs } = this.props;
+    let hasAlbum = songs.findIndex(
+      song => song.get('album').toLowerCase() === album
+    );
+    console.log(album, hasAlbum);
 
+    if (hasAlbum < 0) {
+      this.props.getMusicByAlbum(band, album);
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    const { album } = this.props.match.params;
+    const nextAlbum = nextProps.match.params.album;
+    const nextBand = nextProps.match.params.band;
+    const { songs } = nextProps;
+    let hasAlbum;
+    if (nextAlbum !== album) {
+      hasAlbum = songs.findIndex(
+        song => song.get('album').toLowerCase() === nextAlbum
+      );
+      console.log(nextAlbum, hasAlbum);
+      if (hasAlbum < 0) {
+        this.props.getMusicByAlbum(nextBand, nextAlbum);
+      }
+    }
+  }
   renderBands() {
     const bandSelected = this.props.match.params.band;
     const { bands } = this.props;
@@ -49,9 +77,9 @@ class Music extends Component {
     let albumsPerBand;
 
     if (!isFetching) {
-      songsPerAlbum = songs.filter(
-        song => song.get('album').toLowerCase() === album
-      );
+      songsPerAlbum = songs.filter(song => {
+        return song.get('album').toLowerCase() === album;
+      });
       albumsPerBand = albums.filter(
         albumItem => albumItem.get('band').toLowerCase() === band
       );
@@ -74,8 +102,7 @@ class Music extends Component {
             {!isFetching ? (
               <div className={styles.music}>
                 <h1>Songs for {album}</h1>
-                <Songs band={band} album={album}
-                  songs={songsPerAlbum} />
+                <Songs songs={songsPerAlbum} />
               </div>
             ) : (
               'loading...'
@@ -92,7 +119,7 @@ class Music extends Component {
 }
 
 function mapStateToProps(state) {
-  const { music: isFetching, items: { bands, albums, songs } } = state.music;
+  const { isFetching, items: { bands, albums, songs } } = state.music;
   const { authenticated } = state.auth;
 
   return {

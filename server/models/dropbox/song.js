@@ -14,6 +14,8 @@ const SongSchema = new Schema({
   wave: Object
 });
 
+console.log('SongSchema.index');
+SongSchema.index({name: 'text', band: 'text', album: 'text'})
 // Create the model class
 const ModelClass = mongoose.model('song', SongSchema);
 

@@ -1,14 +1,16 @@
 import { renderComponent , expect } from '../test_helper';
-import App from '../../src/components/app';
+import Song from '../../src/components/music/waveform';
 
-describe('App' , () => {
+
+describe('Song' , () => {
   let component;
 
   beforeEach(() => {
-    component = renderComponent(App);
+    component = renderComponent(Song);
   });
 
   it('renders something', () => {
     expect(component).to.exist;
   });
-});
+
+})

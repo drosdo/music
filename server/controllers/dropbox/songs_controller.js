@@ -82,17 +82,17 @@ exports.update = function(album, band, next) {
   }
 };
 
-exports.get = function(req, res, next) {
-  const band = new RegExp(req.query.band, 'i');
-  const album = new RegExp(req.query.album, 'i');
+exports.get = function(reqBand, reqAlbum, next) {
+  const band = new RegExp(reqBand, 'i');
+  const album = new RegExp(reqAlbum, 'i');
   Song.collection
     .find({
       band,
       album
     })
-    .toArray((err, songs) => {
-      if (err) return res.status(500).send(err);
-      res.send(songs);
+    .toArray((err, data) => {
+      if (err) throw err;
+      next(data);
     });
 };
 
@@ -198,3 +198,16 @@ exports.updateLinks = next => {
     );
   });
 };
+
+
+exports.search = (req, res, next) => {
+  var term = req.query.term;
+  console.log(term);
+  Song.find(
+        { name: new RegExp(term, "i")  }
+    )
+    .exec(function(err, results) {
+      if (err) return res.status(500).send(err);
+      res.send(results);
+    });
+}

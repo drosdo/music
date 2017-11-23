@@ -6,4 +6,5 @@ export const UNAUTH_GUEST = 'auth_guest';
 export const AUTH_GUEST = 'unauth_guest';
 export const REQUEST_MUSIC = 'request_music';
 export const RECEIVE_MUSIC = 'receive_music';
+export const RECEIVE_SONGS = 'receive_songs';
 export const PLAYING_SONG = 'playing_song';

@@ -9,9 +9,7 @@ import Waveform from './waveform';
 
 class Songs extends Component {
   static propTypes = {
-    album: React.PropTypes.string,
     authenticated: React.PropTypes.bool,
-    band: React.PropTypes.string,
     isFetching: React.PropTypes.bool,
     playingSongId: React.PropTypes.string,
     setPlayingSong: React.PropTypes.func,

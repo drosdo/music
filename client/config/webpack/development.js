@@ -49,7 +49,7 @@ module.exports = function(_path) {
 
   return {
     context: _path,
-    devtool: 'source-map',
+    devtool: 'eval',
     devServer: {
       historyApiFallback: {
         disableDotRule: true

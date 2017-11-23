@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
+import * as actions from '../actions';
+import _ from 'lodash';
+
+import SearchBar from './music/search-bar';
 
 class Header extends Component {
   static propTypes = {
-    authenticated: React.PropTypes.bool
+    authenticated: React.PropTypes.bool,
+    searchMusic: React.PropTypes.func
   };
   renderLinks() {
     if (this.props.authenticated) {
@@ -34,6 +39,13 @@ class Header extends Component {
   }
 
   render() {
+    const musicSearch = _.debounce(term => {
+      console.log(term);
+      if (term.length > 3) {
+        this.props.searchMusic(term);
+      }
+    }, 300);
+
     return (
       <div className='header'>
         <nav className='navbar'>
@@ -47,6 +59,7 @@ class Header extends Component {
               </Link>
             </li>
           </ul>
+          <SearchBar onSearchTermChange={musicSearch} />
           <ul className='nav nav-right'>{this.renderLinks()}</ul>
         </nav>
       </div>
@@ -60,4 +73,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps)(Header));
+export default withRouter(connect(mapStateToProps, actions)(Header));

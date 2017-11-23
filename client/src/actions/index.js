@@ -7,6 +7,7 @@ import {
   FETCH_MESSAGE,
   REQUEST_MUSIC,
   RECEIVE_MUSIC,
+  RECEIVE_SONGS,
   PLAYING_SONG
 } from './types';
 
@@ -124,6 +125,13 @@ function receiveMusic(data) {
     receivedAt: Date.now()
   };
 }
+function receiveSongs(data) {
+  return {
+    type: RECEIVE_SONGS,
+    payload: data,
+    receivedAt: Date.now()
+  };
+}
 
 function fetchMusic() {
   return dispatch => {
@@ -164,5 +172,28 @@ export function setPlayingSong(id) {
   return {
     type: PLAYING_SONG,
     payload: id
+  };
+}
+
+export function getMusicByAlbum(band, album) {
+  return dispatch => {
+    dispatch(requestMusic());
+    return axios
+      .get(ROOT_URL + '/get-music-by-album', { params: { band, album } })
+      .then(response => {
+        dispatch(receiveMusic(response.data));
+      });
+  };
+}
+
+export function searchMusic(term) {
+  return dispatch => {
+    dispatch(requestMusic());
+    return axios
+      .get(ROOT_URL + '/search', { params: { term } })
+      .then(response => {
+        console.log(response);
+        dispatch(receiveSongs(response.data));
+      });
   };
 }

@@ -9,8 +9,13 @@ export default function(ComposedComponent) {
       albums: ImmutablePropTypes.list,
       bands: ImmutablePropTypes.list,
       isFetching: React.PropTypes.bool,
-      match: React.PropTypes.obj,
-      history: React.PropTypes.obj
+      match: React.PropTypes.shape({
+        params: React.PropTypes.shape({
+          band: React.PropTypes.node,
+          album: React.PropTypes.node
+        }).isRequired
+      }).isRequired,
+      history: React.PropTypes.object.isRequired
     };
 
     componentWillMount() {
