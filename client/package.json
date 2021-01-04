@@ -48,7 +48,7 @@
     "webpack-dev-server": "^2.8.2"
   },
   "dependencies": {
-    "axios": "^0.16.2",
+    "axios": "^0.21.1",
     "classnames": "^2.2.5",
     "history": "^4.7.2",
     "immutable": "^3.8.2",
